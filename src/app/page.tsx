@@ -1,3 +1,9 @@
+import InvoicePage from '@/components/invoice/InvoicePage';
+
 export default function Home() {
-  return <></>;
+  return (
+    <main>
+      <InvoicePage />
+    </main>
+  );
 }

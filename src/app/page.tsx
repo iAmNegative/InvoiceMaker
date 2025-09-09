@@ -1,9 +1,9 @@
-import InvoicePage from '@/components/invoice/InvoicePage';
+import Dashboard from '@/components/invoice/Dashboard';
 
 export default function Home() {
   return (
     <main>
-      <InvoicePage />
+      <Dashboard />
     </main>
   );
 }

@@ -4,8 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'ArchiInvoice',
-  description: 'Advanced invoice generator for architects',
+  title: 'OutVoice',
+  description: 'Advanced invoice generator',
 };
 
 export default function RootLayout({

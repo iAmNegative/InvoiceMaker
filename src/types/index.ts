@@ -22,3 +22,10 @@ export interface Invoice {
   theme: ThemeName;
   currency: string;
 }
+
+export interface AppSettings {
+    fromName: string;
+    fromAddress: string;
+    gstRate: number;
+    currency: string;
+}

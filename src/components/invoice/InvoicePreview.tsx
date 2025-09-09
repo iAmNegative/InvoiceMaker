@@ -4,7 +4,7 @@ import type { Invoice, ThemeName } from "@/types";
 import { themes } from "@/lib/themes";
 import { formatCurrency, cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { Building2 } from "lucide-react";
+import { FileText } from "lucide-react";
 
 interface InvoicePreviewProps {
   invoice: Invoice;
@@ -25,13 +25,13 @@ export default function InvoicePreview({ invoice }: InvoicePreviewProps) {
   }
 
   return (
-    <div className={cn("p-2 rounded-lg bg-background dark:bg-gray-800 h-full w-full", theme.styles.container)}>
+    <div className={cn("p-10 rounded-lg bg-background dark:bg-gray-800 h-full w-full", theme.styles.container)}>
       <div className={theme.styles.header}>
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-bold uppercase">Invoice</h1>
             <div className="flex items-center gap-2 mt-2">
-              <Building2 className="w-6 h-6"/>
+              <FileText className="w-6 h-6"/>
               <p className="font-bold text-lg">{invoice.fromName}</p>
             </div>
           </div>

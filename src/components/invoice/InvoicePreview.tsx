@@ -19,6 +19,10 @@ export default function InvoicePreview({ invoice }: InvoicePreviewProps) {
   const total = subtotal + gstAmount;
 
   const theme = themes[invoice.theme] || themes.modern;
+  
+  const renderCurrency = (amount: number) => {
+    return formatCurrency(amount, invoice.currency);
+  }
 
   return (
     <div className={cn("p-2 rounded-lg bg-background dark:bg-gray-800 h-full w-full", theme.styles.container)}>
@@ -71,10 +75,10 @@ export default function InvoicePreview({ invoice }: InvoicePreviewProps) {
               <td className="p-3">{item.description}</td>
               <td className="p-3 text-center">{item.quantity}</td>
               <td className="p-3 text-right">
-                {formatCurrency(item.price)}
+                {renderCurrency(item.price)}
               </td>
               <td className="p-3 text-right">
-                {formatCurrency(item.quantity * item.price)}
+                {renderCurrency(item.quantity * item.price)}
               </td>
             </tr>
           ))}
@@ -85,15 +89,15 @@ export default function InvoicePreview({ invoice }: InvoicePreviewProps) {
         <div className="w-full max-w-xs space-y-2">
           <div className="flex justify-between">
             <span>Subtotal</span>
-            <span>{formatCurrency(subtotal)}</span>
+            <span>{renderCurrency(subtotal)}</span>
           </div>
           <div className="flex justify-between">
             <span>GST ({invoice.gstRate}%)</span>
-            <span>{formatCurrency(gstAmount)}</span>
+            <span>{renderCurrency(gstAmount)}</span>
           </div>
           <div className="flex justify-between font-bold text-lg border-t pt-2">
             <span>Total</span>
-            <span>{formatCurrency(total)}</span>
+            <span>{renderCurrency(total)}</span>
           </div>
         </div>
       </div>

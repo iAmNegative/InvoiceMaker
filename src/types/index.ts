@@ -20,4 +20,5 @@ export interface Invoice {
   notes: string;
   gstRate: number;
   theme: ThemeName;
+  currency: string;
 }

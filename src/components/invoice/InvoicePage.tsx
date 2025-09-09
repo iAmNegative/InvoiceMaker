@@ -20,7 +20,6 @@ import ThemeSelector from "./ThemeSelector";
 import InvoiceHistory from "./InvoiceHistory";
 import { useToast } from "@/hooks/use-toast";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { v4 as uuidv4 } from "uuid";
 // Note: uuid is not in package.json. We will use a simple unique id generator.
 const simpleUuid = () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
@@ -45,6 +44,7 @@ const initialInvoice: Invoice = {
   notes: "Thank you for your business. Please make payment within 30 days.",
   gstRate: 5,
   theme: "modern",
+  currency: "USD",
 };
 
 export default function InvoicePage() {
@@ -184,7 +184,7 @@ export default function InvoicePage() {
               </div>
               <div className="lg:col-span-3">
                 <Card id="invoice-preview-wrapper" className="shadow-lg">
-                  <CardHeader>
+                  <CardHeader className="no-print">
                     <CardTitle>Live Preview</CardTitle>
                   </CardHeader>
                   <CardContent>

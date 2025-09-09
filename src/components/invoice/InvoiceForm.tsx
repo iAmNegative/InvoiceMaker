@@ -11,11 +11,20 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface InvoiceFormProps {
   invoice: Invoice;
   setInvoice: React.Dispatch<React.SetStateAction<Invoice>>;
 }
+
+const currencies = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "INR"];
 
 export default function InvoiceForm({ invoice, setInvoice }: InvoiceFormProps) {
   const handleItemChange = (
@@ -62,14 +71,27 @@ export default function InvoiceForm({ invoice, setInvoice }: InvoiceFormProps) {
           <CardTitle>Invoice Details</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div className="space-y-2">
               <Label htmlFor="invoiceNumber">Invoice Number</Label>
               <Input id="invoiceNumber" value={invoice.invoiceNumber} onChange={(e) => handleFieldChange("invoiceNumber", e.target.value)}/>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="gstRate">GST Rate (%)</Label>
-              <Input id="gstRate" type="number" value={invoice.gstRate} onChange={(e) => handleFieldChange("gstRate", parseFloat(e.target.value) || 0)}/>
+             <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="gstRate">GST Rate (%)</Label>
+                    <Input id="gstRate" type="number" value={invoice.gstRate} onChange={(e) => handleFieldChange("gstRate", parseFloat(e.target.value) || 0)}/>
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="currency">Currency</Label>
+                    <Select value={invoice.currency} onValueChange={(value) => handleFieldChange("currency", value)}>
+                        <SelectTrigger id="currency">
+                            <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {currencies.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">

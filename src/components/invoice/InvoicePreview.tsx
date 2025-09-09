@@ -21,7 +21,7 @@ export default function InvoicePreview({ invoice }: InvoicePreviewProps) {
   const theme = themes[invoice.theme] || themes.modern;
 
   return (
-    <div className={cn("p-2 rounded-lg bg-gray-100 dark:bg-gray-800", theme.styles.container)}>
+    <div className={cn("p-2 rounded-lg bg-background dark:bg-gray-800 h-full w-full", theme.styles.container)}>
       <div className={theme.styles.header}>
         <div className="flex justify-between items-start">
           <div>

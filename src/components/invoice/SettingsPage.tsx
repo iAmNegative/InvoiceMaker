@@ -56,7 +56,7 @@ export default function SettingsPage({ settings, setSettings }: SettingsPageProp
                     <Label htmlFor="fromAddress">Your Address</Label>
                     <Textarea id="fromAddress" value={settings.fromAddress} onChange={(e) => handleFieldChange("fromAddress", e.target.value)} placeholder="e.g. 123 Main St, Anytown, USA 12345"/>
                 </div>
-                 <div className="grid grid-cols-2 gap-4">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="gstRate">Default GST Rate (%)</Label>
                         <Input id="gstRate" type="number" value={settings.gstRate} onChange={(e) => handleFieldChange("gstRate", parseFloat(e.target.value) || 0)}/>

@@ -76,7 +76,7 @@ export default function InvoiceForm({ invoice, setInvoice }: InvoiceFormProps) {
               <Label htmlFor="invoiceNumber">Invoice Number</Label>
               <Input id="invoiceNumber" value={invoice.invoiceNumber} onChange={(e) => handleFieldChange("invoiceNumber", e.target.value)}/>
             </div>
-             <div className="grid grid-cols-2 gap-4">
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Label htmlFor="gstRate">GST Rate (%)</Label>
                     <Input id="gstRate" type="number" value={invoice.gstRate} onChange={(e) => handleFieldChange("gstRate", parseFloat(e.target.value) || 0)}/>
@@ -94,7 +94,7 @@ export default function InvoiceForm({ invoice, setInvoice }: InvoiceFormProps) {
                 </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Invoice Date</Label>
               <Popover>
@@ -166,16 +166,16 @@ export default function InvoiceForm({ invoice, setInvoice }: InvoiceFormProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           {invoice.items.map((item, index) => (
-            <div key={item.id} className="flex items-end gap-2">
-              <div className="flex-grow space-y-2">
+            <div key={item.id} className="flex flex-wrap sm:flex-nowrap items-end gap-2">
+              <div className="flex-grow w-full space-y-2">
                 <Label htmlFor={`item-desc-${index}`} className="sr-only">Description</Label>
                 <Input id={`item-desc-${index}`} placeholder="Item description" value={item.description} onChange={(e) => handleItemChange(item.id, "description", e.target.value)}/>
               </div>
-              <div className="space-y-2 w-20">
+              <div className="space-y-2 w-20 flex-shrink-0">
                 <Label htmlFor={`item-qty-${index}`} className="sr-only">Qty</Label>
                 <Input id={`item-qty-${index}`} type="number" placeholder="Qty" value={item.quantity} onChange={(e) => handleItemChange(item.id, "quantity", parseFloat(e.target.value) || 0)}/>
               </div>
-              <div className="space-y-2 w-28">
+              <div className="space-y-2 w-28 flex-shrink-0">
                 <Label htmlFor={`item-price-${index}`} className="sr-only">Price</Label>
                 <Input id={`item-price-${index}`} type="number" placeholder="Price" value={item.price} onChange={(e) => handleItemChange(item.id, "price", parseFloat(e.target.value) || 0)}/>
               </div>

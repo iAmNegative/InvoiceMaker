@@ -2,7 +2,7 @@
 
 import type { Invoice, InvoiceItem, ThemeName, AppSettings } from "@/types";
 import { Button } from "@/components/ui/button";
-import { Download, Plus } from "lucide-react";
+import { Download, Plus, Save } from "lucide-react";
 import InvoiceForm from "./InvoiceForm";
 import InvoicePreview from "./InvoicePreview";
 import { useToast } from "@/hooks/use-toast";
@@ -74,16 +74,16 @@ export default function InvoicePage({
 
   return (
     <>
-      <header className="mb-8 flex items-center justify-between no-print">
+      <header className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 no-print">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Create Invoice</h1>
-          <p className="text-muted-foreground">Fill in the details to generate your invoice.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Create Invoice</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">Fill in the details to generate your invoice.</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={saveInvoice} variant="outline">Save</Button>
-          <Button onClick={handleSaveAndPrint} className="bg-accent hover:bg-accent/90">
-            <Download className="mr-2 h-4 w-4" />
-            Save & Download PDF
+          <Button onClick={saveInvoice} variant="outline" size="sm" className="sm:size-auto"><Save className="sm:mr-2" /><span className="hidden sm:inline">Save</span></Button>
+          <Button onClick={handleSaveAndPrint} size="sm" className="sm:size-auto bg-accent hover:bg-accent/90">
+            <Download className="sm:mr-2" />
+            <span className="hidden sm:inline">Save & Download</span>
           </Button>
         </div>
       </header>

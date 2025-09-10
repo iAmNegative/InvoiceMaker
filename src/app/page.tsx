@@ -221,7 +221,7 @@ const InvoicePreview = React.forwardRef<HTMLDivElement, { invoice: Invoice }>(({
   const renderCurrency = (amount: number) => formatCurrency(amount, invoice.currency);
 
   return (
-    <div ref={ref} id="invoice-preview-container" className={cn("p-10 rounded-lg bg-white text-gray-900 h-full w-full", template.styles.container, template.font)}>
+    <div ref={ref} id="invoice-preview-container" className={cn("p-10 rounded-lg h-full w-full", template.styles.container, template.font)}>
         <style jsx global>{`
             @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&family=Lato:wght@400;700&family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@400;700&display=swap');
         `}</style>
@@ -242,12 +242,12 @@ const InvoicePreview = React.forwardRef<HTMLDivElement, { invoice: Invoice }>(({
         <div>
           <h3 className="font-semibold mb-2 uppercase tracking-wider text-xs">From:</h3>
           <p className="font-semibold">{invoice.fromName}</p>
-          <p className="whitespace-pre-line text-gray-600">{invoice.fromAddress}</p>
+          <p className="whitespace-pre-line">{invoice.fromAddress}</p>
         </div>
         <div className="text-right">
           <h3 className="font-semibold mb-2 uppercase tracking-wider text-xs">To:</h3>
           <p className="font-semibold">{invoice.clientName}</p>
-          <p className="whitespace-pre-line text-gray-600">{invoice.clientAddress}</p>
+          <p className="whitespace-pre-line">{invoice.clientAddress}</p>
         </div>
       </div>
       <div className="overflow-x-auto">
@@ -275,7 +275,7 @@ const InvoicePreview = React.forwardRef<HTMLDivElement, { invoice: Invoice }>(({
       {invoice.notes && (
         <div className="mt-8 text-sm">
           <h3 className="font-semibold mb-2">Notes</h3>
-          <p className="whitespace-pre-line text-gray-600">{invoice.notes}</p>
+          <p className="whitespace-pre-line">{invoice.notes}</p>
         </div>
       )}
       <footer className={cn("text-xs text-center mt-8 pt-4", template.styles.footer)}><p>Thank you for choosing {invoice.fromName}.</p></footer>
@@ -457,7 +457,7 @@ const InvoicePage = ({ activeInvoice, setActiveInvoice, saveInvoice, handleSaveA
           </ScrollArea>
           <div className="lg:col-span-3">
              <ScrollArea className="h-full">
-                <div id="invoice-preview-wrapper" className="shadow-lg rounded-lg border bg-card text-card-foreground">
+                <div id="invoice-preview-wrapper" className="shadow-lg rounded-lg border bg-card text-card-foreground light">
                     <InvoicePreview invoice={activeInvoice} ref={previewRef} />
                 </div>
             </ScrollArea>

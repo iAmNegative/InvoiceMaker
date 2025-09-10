@@ -1,4 +1,5 @@
-import type { ThemeName } from "@/types";
+
+type ThemeName = 'classic' | 'modern' | 'minimal' | 'bold' | 'elegant';
 
 type ThemeStyles = {
   [key in ThemeName]: {

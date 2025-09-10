@@ -441,18 +441,18 @@ const InvoicePage = ({ activeInvoice, setActiveInvoice, saveInvoice, handleSaveA
 
     return (
       <div className="flex flex-col h-full">
-        <header className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 no-print flex-shrink-0">
+        <header className="mb-4 sm:mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 no-print flex-shrink-0">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Create Invoice</h1>
             <p className="text-muted-foreground text-sm sm:text-base">Fill in the details to generate your invoice.</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button onClick={saveInvoice} variant="outline"><Save className="mr-2" />Save</Button>
-            <Button onClick={handleSaveAndPrint}><Download className="mr-2" />Save & Download</Button>
+            <Button onClick={saveInvoice} variant="outline" className="shadow-sm"><Save className="mr-2 h-4 w-4" />Save</Button>
+            <Button onClick={handleSaveAndPrint} className="shadow-sm font-semibold"><Download className="mr-2 h-4 w-4" />Save & Download</Button>
           </div>
         </header>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 flex-grow min-h-0">
-          <ScrollArea className="lg:col-span-2 no-print pr-6">
+          <ScrollArea className="lg:col-span-2 no-print pr-2 -mr-2">
             <InvoiceForm invoice={activeInvoice} setInvoice={setActiveInvoice as React.Dispatch<React.SetStateAction<Invoice>>} />
           </ScrollArea>
           <div className="lg:col-span-3">
@@ -468,42 +468,41 @@ const InvoicePage = ({ activeInvoice, setActiveInvoice, saveInvoice, handleSaveA
 }
 
 // --- DARK MODE TOGGLE ---
-const useThemeDetector = () => {
-    const getCurrentTheme = () => typeof window !== 'undefined' && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const [isDarkTheme, setIsDarkTheme] = useState(getCurrentTheme());  
-    const mqListener = (e: MediaQueryListEvent) => {
-        setIsDarkTheme(e.matches);
-    };
-    
-    useEffect(() => {
-      const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-      darkThemeMq.addListener(mqListener);
-      return () => darkThemeMq.removeListener(mqListener);
-    }, []);
-    return isDarkTheme;
-}
+const useTheme = () => {
+  const [theme, setThemeState] = useState('system');
 
-const DarkModeToggle = () => {
-    const [theme, setTheme] = useState('system');
-    const isDarkTheme = useThemeDetector();
+  useEffect(() => {
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    const storedTheme = localStorage.getItem('outvoice-theme') || 'system';
+    setThemeState(storedTheme);
+    if (storedTheme === 'dark' || (storedTheme === 'system' && isDarkMode)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
 
-    useEffect(() => {
-        const storedTheme = localStorage.getItem('outvoice-theme') || 'system';
-        setTheme(storedTheme);
-    }, []);
-
-    useEffect(() => {
-        if (theme === 'dark' || (theme === 'system' && isDarkTheme)) {
+  const setTheme = (newTheme: 'light' | 'dark' | 'system') => {
+    setThemeState(newTheme);
+    localStorage.setItem('outvoice-theme', newTheme);
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else if (newTheme === 'light') {
+      document.documentElement.classList.remove('dark');
+    } else {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.documentElement.classList.add('dark');
-            localStorage.setItem('outvoice-theme', 'dark');
         } else {
             document.documentElement.classList.remove('dark');
-            localStorage.setItem('outvoice-theme', 'light');
         }
-        if (theme === 'system') {
-            localStorage.setItem('outvoice-theme', 'system');
-        }
-    }, [theme, isDarkTheme]);
+    }
+  };
+
+  return { theme, setTheme };
+};
+
+const DarkModeToggle = () => {
+    const { theme, setTheme } = useTheme();
 
     return (
         <Button
@@ -514,6 +513,9 @@ const DarkModeToggle = () => {
         >
             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="ml-2 text-sm font-medium text-sidebar-foreground group-data-[collapsible=icon]:hidden">
+                Toggle Theme
+            </span>
             <span className="sr-only">Toggle theme</span>
         </Button>
     );
@@ -541,13 +543,6 @@ export default function Dashboard() {
       
       const savedSettings = localStorage.getItem("outvoice-settings");
       if(savedSettings) setSettings(JSON.parse(savedSettings));
-
-      const theme = localStorage.getItem('outvoice-theme');
-      if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
-      } else {
-          document.documentElement.classList.remove('dark');
-      }
 
     } catch (error) {
       console.error("Failed to parse from localStorage", error);
@@ -611,12 +606,13 @@ export default function Dashboard() {
 
   const handleSaveAndPrint = () => {
     saveInvoice();
-    handlePrint();
+    // Delay print to allow state to update and re-render
+    setTimeout(handlePrint, 100);
   };
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen bg-muted/50">
         <Sidebar className="no-print">
           <SidebarHeader>
             <div className="flex items-center gap-2 p-2">
@@ -630,7 +626,7 @@ export default function Dashboard() {
               <Button className="w-full justify-start mt-2" variant="ghost" onClick={() => setActiveView('settings')}><Settings className="mr-2"/> Settings</Button>
                <DarkModeToggle />
             </SidebarGroup>
-            <div className="mt-auto flex flex-col">
+            <div className="mt-auto flex flex-col min-h-0">
               <SidebarGroup>
                 <SidebarGroupLabel>Templates</SidebarGroupLabel>
                 <TemplateSelector currentTemplate={activeInvoice?.template || 'modern'} onTemplateChange={updateInvoiceTemplate} />
@@ -643,8 +639,11 @@ export default function Dashboard() {
           </SidebarContent>
         </Sidebar>
         <SidebarInset>
-          <div className={cn("p-4 sm:p-6 lg:p-8 flex flex-col h-full", activeView === 'invoice' && 'invoice-page-wrapper')}>
-            <header className="mb-8 flex items-center justify-between no-print md:hidden"><SidebarTrigger /></header>
+          <div className={cn("p-4 sm:p-6 lg:p-8 flex flex-col h-screen", activeView === 'invoice')}>
+             <header className="mb-4 flex items-center justify-between no-print md:hidden">
+              <SidebarTrigger />
+              <div></div>
+            </header>
             {activeView === 'invoice' && 
               <InvoicePage 
                 activeInvoice={activeInvoice} 

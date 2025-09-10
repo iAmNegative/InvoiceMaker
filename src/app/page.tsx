@@ -42,7 +42,7 @@ import { cn, formatCurrency } from "@/lib/utils";
 import { templates } from "@/lib/themes";
 import { format } from "date-fns";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Plus, Settings, FileText, Trash2, Search, Download, Save, PlusCircle, Calendar as CalendarIcon, CheckCircle, Moon, Sun } from "lucide-react";
+import { Plus, Settings, FileText, Trash2, Search, Download, Save, PlusCircle, Calendar as CalendarIcon, CheckCircle } from "lucide-react";
 
 
 // --- TYPE DEFINITIONS ---
@@ -467,61 +467,6 @@ const InvoicePage = ({ activeInvoice, setActiveInvoice, saveInvoice, handleSaveA
     );
 }
 
-// --- DARK MODE TOGGLE ---
-const useTheme = () => {
-  const [theme, setThemeState] = useState('system');
-
-  useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    const storedTheme = localStorage.getItem('outvoice-theme') || 'system';
-    setThemeState(storedTheme);
-    if (storedTheme === 'dark' || (storedTheme === 'system' && isDarkMode)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
-
-  const setTheme = (newTheme: 'light' | 'dark' | 'system') => {
-    setThemeState(newTheme);
-    localStorage.setItem('outvoice-theme', newTheme);
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else if (newTheme === 'light') {
-      document.documentElement.classList.remove('dark');
-    } else {
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    }
-  };
-
-  return { theme, setTheme };
-};
-
-const DarkModeToggle = () => {
-    const { theme, setTheme } = useTheme();
-
-    return (
-        <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="w-full justify-start mt-2"
-        >
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="ml-2 text-sm font-medium text-sidebar-foreground group-data-[collapsible=icon]:hidden">
-                Toggle Theme
-            </span>
-            <span className="sr-only">Toggle theme</span>
-        </Button>
-    );
-}
-
-
 // --- MAIN DASHBOARD COMPONENT ---
 export default function Dashboard() {
   const [activeView, setActiveView] = useState<'invoice' | 'settings'>('invoice');
@@ -624,7 +569,6 @@ export default function Dashboard() {
             <SidebarGroup>
               <Button className="w-full justify-start" onClick={createNewInvoice}><Plus className="mr-2"/> New Invoice</Button>
               <Button className="w-full justify-start mt-2" variant="ghost" onClick={() => setActiveView('settings')}><Settings className="mr-2"/> Settings</Button>
-               <DarkModeToggle />
             </SidebarGroup>
             <div className="mt-auto flex flex-col min-h-0">
               <SidebarGroup>

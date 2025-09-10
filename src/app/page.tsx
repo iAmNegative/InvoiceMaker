@@ -221,64 +221,64 @@ const InvoicePreview = React.forwardRef<HTMLDivElement, { invoice: Invoice }>(({
   const renderCurrency = (amount: number) => formatCurrency(amount, invoice.currency);
 
   return (
-    <div ref={ref} id="invoice-preview-container" className={cn("p-6 sm:p-10 rounded-lg bg-background dark:bg-gray-800 h-full w-full", template.styles.container)}>
+    <div ref={ref} id="invoice-preview-container" className={cn("p-10 rounded-lg bg-white text-gray-900 h-full w-full", template.styles.container, template.font)}>
+        <style jsx global>{`
+            @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&family=Lato:wght@400;700&family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@400;700&display=swap');
+        `}</style>
       <div className={template.styles.header}>
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold uppercase">Invoice</h1>
-            <div className="flex items-center gap-2 mt-2">
-              <FileText className="w-5 h-5 sm:w-6 sm:h-6"/>
-              <p className="font-bold text-base sm:text-lg">{invoice.fromName}</p>
-            </div>
+            <h1 className="text-3xl font-bold uppercase">Invoice</h1>
+            <p className="font-bold text-lg mt-2">{invoice.fromName}</p>
           </div>
-          <div className="text-left sm:text-right text-xs sm:text-sm">
-            <p className="font-semibold sm:font-normal">{invoice.invoiceNumber}</p>
+          <div className="text-left sm:text-right text-sm">
+            <p className="font-semibold">{invoice.invoiceNumber}</p>
             <p>Date: {format(invoice.date, "MMM dd, yyyy")}</p>
             <p>Due: {format(invoice.dueDate, "MMM dd, yyyy")}</p>
           </div>
         </div>
       </div>
-      <div className={cn("grid grid-cols-2 gap-4 sm:gap-8 my-6 sm:my-8 text-xs sm:text-sm", template.styles.fromTo)}>
+      <div className={cn("grid grid-cols-2 gap-8 my-8 text-sm", template.styles.fromTo)}>
         <div>
-          <h3 className="font-semibold mb-2">From:</h3>
-          <p>{invoice.fromName}</p>
-          <p className="whitespace-pre-line">{invoice.fromAddress}</p>
+          <h3 className="font-semibold mb-2 uppercase tracking-wider text-xs">From:</h3>
+          <p className="font-semibold">{invoice.fromName}</p>
+          <p className="whitespace-pre-line text-gray-600">{invoice.fromAddress}</p>
         </div>
         <div className="text-right">
-          <h3 className="font-semibold mb-2">To:</h3>
-          <p>{invoice.clientName}</p>
-          <p className="whitespace-pre-line">{invoice.clientAddress}</p>
+          <h3 className="font-semibold mb-2 uppercase tracking-wider text-xs">To:</h3>
+          <p className="font-semibold">{invoice.clientName}</p>
+          <p className="whitespace-pre-line text-gray-600">{invoice.clientAddress}</p>
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs sm:text-sm">
-          <thead><tr className={template.styles.tableHeader}><th className="p-2 sm:p-3">Description</th><th className="p-2 sm:p-3 text-center">Qty</th><th className="p-2 sm:p-3 text-right">Unit Price</th><th className="p-2 sm:p-3 text-right">Total</th></tr></thead>
+        <table className="w-full text-left text-sm">
+          <thead><tr className={template.styles.tableHeader}><th className="p-3">Description</th><th className="p-3 text-center">Qty</th><th className="p-3 text-right">Unit Price</th><th className="p-3 text-right">Total</th></tr></thead>
           <tbody>
             {invoice.items.map((item) => (
               <tr key={item.id} className={template.styles.tableRow}>
-                <td className="p-2 sm:p-3">{item.description}</td>
-                <td className="p-2 sm:p-3 text-center">{item.quantity}</td>
-                <td className="p-2 sm:p-3 text-right">{renderCurrency(item.price)}</td>
-                <td className="p-2 sm:p-3 text-right">{renderCurrency(item.quantity * item.price)}</td>
+                <td className="p-3">{item.description}</td>
+                <td className="p-3 text-center">{item.quantity}</td>
+                <td className="p-3 text-right">{renderCurrency(item.price)}</td>
+                <td className="p-3 text-right">{renderCurrency(item.quantity * item.price)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <div className={cn("flex justify-end mt-6 sm:mt-8", template.styles.totals)}>
-        <div className="w-full max-w-xs space-y-2 text-xs sm:text-sm">
+      <div className={cn("flex justify-end mt-8", template.styles.totals)}>
+        <div className="w-full max-w-xs space-y-2 text-sm">
           <div className="flex justify-between"><span>Subtotal</span><span>{renderCurrency(subtotal)}</span></div>
           <div className="flex justify-between"><span>GST ({invoice.gstRate}%)</span><span>{renderCurrency(gstAmount)}</span></div>
-          <div className="flex justify-between font-bold text-base sm:text-lg border-t pt-2"><span>Total</span><span>{renderCurrency(total)}</span></div>
+          <div className={cn("flex justify-between font-bold text-lg border-t pt-2", template.styles.totalRow)}><span>Total</span><span>{renderCurrency(total)}</span></div>
         </div>
       </div>
       {invoice.notes && (
-        <div className="mt-6 sm:mt-8 text-xs sm:text-sm">
+        <div className="mt-8 text-sm">
           <h3 className="font-semibold mb-2">Notes</h3>
-          <p className="whitespace-pre-line">{invoice.notes}</p>
+          <p className="whitespace-pre-line text-gray-600">{invoice.notes}</p>
         </div>
       )}
-      <footer className={cn("text-xs sm:text-sm", template.styles.footer)}><p>Thank you for choosing {invoice.fromName}.</p></footer>
+      <footer className={cn("text-xs text-center mt-8 pt-4", template.styles.footer)}><p>Thank you for choosing {invoice.fromName}.</p></footer>
     </div>
   );
 });
@@ -612,7 +612,7 @@ export default function Dashboard() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen bg-muted/50">
+      <div className="flex min-h-screen invoice-page-wrapper">
         <Sidebar className="no-print">
           <SidebarHeader>
             <div className="flex items-center gap-2 p-2">

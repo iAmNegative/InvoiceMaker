@@ -39,10 +39,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { cn, formatCurrency } from "@/lib/utils";
-import { themes } from "@/lib/themes";
+import { templates } from "@/lib/templates";
 import { format } from "date-fns";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Plus, Settings, FileText, Trash2, Search, Download, Save, PlusCircle, Calendar as CalendarIcon, CheckCircle } from "lucide-react";
+import { Plus, Settings, FileText, Trash2, Search, Download, Save, PlusCircle, Calendar as CalendarIcon, CheckCircle, Moon, Sun } from "lucide-react";
 
 
 // --- TYPE DEFINITIONS ---
@@ -53,7 +53,7 @@ interface InvoiceItem {
   price: number;
 }
 
-type ThemeName = 'classic' | 'modern' | 'minimal' | 'bold' | 'elegant';
+type TemplateName = 'classic' | 'modern' | 'minimal' | 'bold' | 'elegant';
 
 interface Invoice {
   id: string;
@@ -67,7 +67,7 @@ interface Invoice {
   items: InvoiceItem[];
   notes: string;
   gstRate: number;
-  theme: ThemeName;
+  template: TemplateName;
   currency: string;
 }
 
@@ -217,12 +217,12 @@ const InvoicePreview = React.forwardRef<HTMLDivElement, { invoice: Invoice }>(({
   const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.price, 0);
   const gstAmount = subtotal * (invoice.gstRate / 100);
   const total = subtotal + gstAmount;
-  const theme = themes[invoice.theme] || themes.modern;
+  const template = templates[invoice.template] || templates.modern;
   const renderCurrency = (amount: number) => formatCurrency(amount, invoice.currency);
 
   return (
-    <div ref={ref} id="invoice-preview-container" className={cn("p-6 sm:p-10 rounded-lg bg-background dark:bg-gray-800 h-full w-full", theme.styles.container)}>
-      <div className={theme.styles.header}>
+    <div ref={ref} id="invoice-preview-container" className={cn("p-6 sm:p-10 rounded-lg bg-background dark:bg-gray-800 h-full w-full", template.styles.container)}>
+      <div className={template.styles.header}>
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold uppercase">Invoice</h1>
@@ -238,7 +238,7 @@ const InvoicePreview = React.forwardRef<HTMLDivElement, { invoice: Invoice }>(({
           </div>
         </div>
       </div>
-      <div className={cn("grid grid-cols-2 gap-4 sm:gap-8 my-6 sm:my-8 text-xs sm:text-sm", theme.styles.fromTo)}>
+      <div className={cn("grid grid-cols-2 gap-4 sm:gap-8 my-6 sm:my-8 text-xs sm:text-sm", template.styles.fromTo)}>
         <div>
           <h3 className="font-semibold mb-2">From:</h3>
           <p>{invoice.fromName}</p>
@@ -252,10 +252,10 @@ const InvoicePreview = React.forwardRef<HTMLDivElement, { invoice: Invoice }>(({
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs sm:text-sm">
-          <thead><tr className={theme.styles.tableHeader}><th className="p-2 sm:p-3">Description</th><th className="p-2 sm:p-3 text-center">Qty</th><th className="p-2 sm:p-3 text-right">Unit Price</th><th className="p-2 sm:p-3 text-right">Total</th></tr></thead>
+          <thead><tr className={template.styles.tableHeader}><th className="p-2 sm:p-3">Description</th><th className="p-2 sm:p-3 text-center">Qty</th><th className="p-2 sm:p-3 text-right">Unit Price</th><th className="p-2 sm:p-3 text-right">Total</th></tr></thead>
           <tbody>
             {invoice.items.map((item) => (
-              <tr key={item.id} className={theme.styles.tableRow}>
+              <tr key={item.id} className={template.styles.tableRow}>
                 <td className="p-2 sm:p-3">{item.description}</td>
                 <td className="p-2 sm:p-3 text-center">{item.quantity}</td>
                 <td className="p-2 sm:p-3 text-right">{renderCurrency(item.price)}</td>
@@ -265,7 +265,7 @@ const InvoicePreview = React.forwardRef<HTMLDivElement, { invoice: Invoice }>(({
           </tbody>
         </table>
       </div>
-      <div className={cn("flex justify-end mt-6 sm:mt-8", theme.styles.totals)}>
+      <div className={cn("flex justify-end mt-6 sm:mt-8", template.styles.totals)}>
         <div className="w-full max-w-xs space-y-2 text-xs sm:text-sm">
           <div className="flex justify-between"><span>Subtotal</span><span>{renderCurrency(subtotal)}</span></div>
           <div className="flex justify-between"><span>GST ({invoice.gstRate}%)</span><span>{renderCurrency(gstAmount)}</span></div>
@@ -278,34 +278,34 @@ const InvoicePreview = React.forwardRef<HTMLDivElement, { invoice: Invoice }>(({
           <p className="whitespace-pre-line">{invoice.notes}</p>
         </div>
       )}
-      <footer className={cn("text-xs sm:text-sm", theme.styles.footer)}><p>Thank you for choosing {invoice.fromName}.</p></footer>
+      <footer className={cn("text-xs sm:text-sm", template.styles.footer)}><p>Thank you for choosing {invoice.fromName}.</p></footer>
     </div>
   );
 });
 InvoicePreview.displayName = 'InvoicePreview';
 
 // --- SUB-COMPONENTS ---
-const ThemeSelector = ({ currentTheme, onThemeChange }: { currentTheme: ThemeName, onThemeChange: (theme: ThemeName) => void }) => (
+const TemplateSelector = ({ currentTemplate, onTemplateChange }: { currentTemplate: TemplateName, onTemplateChange: (template: TemplateName) => void }) => (
     <div className="grid grid-cols-1 gap-2">
-      {(Object.keys(themes) as ThemeName[]).map((themeKey) => (
+      {(Object.keys(templates) as TemplateName[]).map((templateKey) => (
         <Card
-          key={themeKey}
-          onClick={() => onThemeChange(themeKey)}
+          key={templateKey}
+          onClick={() => onTemplateChange(templateKey)}
           className={cn(
-            "cursor-pointer transition-all hover:shadow-md relative",
-            currentTheme === themeKey ? "ring-2 ring-primary" : "ring-1 ring-border"
+            "cursor-pointer transition-all hover:shadow-md relative bg-sidebar-accent border-sidebar-border",
+            currentTemplate === templateKey ? "ring-2 ring-sidebar-primary" : ""
           )}
         >
           <CardContent className="p-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex -space-x-2">
-                <div className={cn("w-5 h-8 rounded", themes[themeKey].preview.background)}></div>
-                <div className={cn("w-5 h-8 rounded", themes[themeKey].preview.primary)}></div>
-                <div className={cn("w-5 h-8 rounded", themes[themeKey].preview.secondary)}></div>
+                <div className={cn("w-5 h-8 rounded", templates[templateKey].preview.background)}></div>
+                <div className={cn("w-5 h-8 rounded", templates[templateKey].preview.primary)}></div>
+                <div className={cn("w-5 h-8 rounded", templates[templateKey].preview.secondary)}></div>
               </div>
-              <span className="text-sm font-medium">{themes[themeKey].name}</span>
+              <span className="text-sm font-medium text-sidebar-accent-foreground">{templates[templateKey].name}</span>
             </div>
-            {currentTheme === themeKey && <CheckCircle className="w-5 h-5 text-primary" />}
+            {currentTemplate === templateKey && <CheckCircle className="w-5 h-5 text-sidebar-primary" />}
           </CardContent>
         </Card>
       ))}
@@ -321,7 +321,7 @@ const InvoiceHistory = ({ invoices, onLoad, onDelete, activeId, searchTerm, setS
       <div className="flex flex-col h-full">
         <div className="relative p-2">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search by client..." className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          <Input placeholder="Search by client..." className="pl-8 bg-sidebar-accent border-sidebar-border text-sidebar-accent-foreground" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
         </div>
         <ScrollArea className="flex-grow">
           {filteredInvoices.length === 0 ? (
@@ -331,7 +331,7 @@ const InvoiceHistory = ({ invoices, onLoad, onDelete, activeId, searchTerm, setS
           ) : (
             <div className="space-y-1 p-2">
               {filteredInvoices.map((invoice) => (
-                <div key={invoice.id} className={cn("group flex items-center justify-between p-2 rounded-md text-sm", activeId === invoice.id ? "bg-accent/20" : "hover:bg-muted/50")}>
+                <div key={invoice.id} className={cn("group flex items-center justify-between p-2 rounded-md text-sm", activeId === invoice.id ? "bg-sidebar-accent" : "hover:bg-sidebar-accent/50")}>
                   <button onClick={() => onLoad(invoice.id)} className="flex-grow text-left flex items-center gap-2 truncate">
                     <FileText className="h-4 w-4 shrink-0" />
                     <div className="truncate">
@@ -382,7 +382,7 @@ const SettingsPage = ({ settings, setSettings }: { settings: AppSettings, setSet
     }
 
     return (
-      <div>
+      <div className="max-w-4xl mx-auto">
         <header className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
           <p className="text-muted-foreground">Manage your default invoice information.</p>
@@ -440,30 +440,85 @@ const InvoicePage = ({ activeInvoice, setActiveInvoice, saveInvoice, handleSaveA
     }
 
     return (
-      <>
-        <header className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 no-print">
+      <div className="flex flex-col h-full">
+        <header className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 no-print flex-shrink-0">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Create Invoice</h1>
             <p className="text-muted-foreground text-sm sm:text-base">Fill in the details to generate your invoice.</p>
           </div>
           <div className="flex items-center gap-2">
             <Button onClick={saveInvoice} variant="outline" size="sm" className="sm:size-auto"><Save className="sm:mr-2" /><span className="hidden sm:inline">Save</span></Button>
-            <Button onClick={handleSaveAndPrint} size="sm" className="sm:size-auto bg-accent hover:bg-accent/90"><Download className="sm:mr-2" /><span className="hidden sm:inline">Save & Download</span></Button>
+            <Button onClick={handleSaveAndPrint} size="sm" className="sm:size-auto"><Download className="sm:mr-2" /><span className="hidden sm:inline">Save & Download</span></Button>
           </div>
         </header>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          <div className="lg:col-span-2 no-print">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 flex-grow min-h-0">
+          <ScrollArea className="lg:col-span-2 no-print pr-6">
             <InvoiceForm invoice={activeInvoice} setInvoice={setActiveInvoice as React.Dispatch<React.SetStateAction<Invoice>>} />
-          </div>
+          </ScrollArea>
           <div className="lg:col-span-3">
-            <div id="invoice-preview-wrapper" className="shadow-lg rounded-lg border bg-card text-card-foreground">
-              <InvoicePreview invoice={activeInvoice} ref={previewRef} />
-            </div>
+             <ScrollArea className="h-full">
+                <div id="invoice-preview-wrapper" className="shadow-lg rounded-lg border bg-card text-card-foreground">
+                    <InvoicePreview invoice={activeInvoice} ref={previewRef} />
+                </div>
+            </ScrollArea>
           </div>
         </div>
-      </>
+      </div>
     );
 }
+
+// --- DARK MODE TOGGLE ---
+const useThemeDetector = () => {
+    const getCurrentTheme = () => typeof window !== 'undefined' && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const [isDarkTheme, setIsDarkTheme] = useState(getCurrentTheme());  
+    const mqListener = (e: MediaQueryListEvent) => {
+        setIsDarkTheme(e.matches);
+    };
+    
+    useEffect(() => {
+      const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+      darkThemeMq.addListener(mqListener);
+      return () => darkThemeMq.removeListener(mqListener);
+    }, []);
+    return isDarkTheme;
+}
+
+const DarkModeToggle = () => {
+    const [theme, setTheme] = useState('system');
+    const isDarkTheme = useThemeDetector();
+
+    useEffect(() => {
+        const storedTheme = localStorage.getItem('outvoice-theme') || 'system';
+        setTheme(storedTheme);
+    }, []);
+
+    useEffect(() => {
+        if (theme === 'dark' || (theme === 'system' && isDarkTheme)) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('outvoice-theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('outvoice-theme', 'light');
+        }
+        if (theme === 'system') {
+            localStorage.setItem('outvoice-theme', 'system');
+        }
+    }, [theme, isDarkTheme]);
+
+    return (
+        <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="w-full justify-start mt-2"
+        >
+            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+        </Button>
+    );
+}
+
 
 // --- MAIN DASHBOARD COMPONENT ---
 export default function Dashboard() {
@@ -486,6 +541,14 @@ export default function Dashboard() {
       
       const savedSettings = localStorage.getItem("outvoice-settings");
       if(savedSettings) setSettings(JSON.parse(savedSettings));
+
+      const theme = localStorage.getItem('outvoice-theme');
+      if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+      } else {
+          document.documentElement.classList.remove('dark');
+      }
+
     } catch (error) {
       console.error("Failed to parse from localStorage", error);
     }
@@ -504,7 +567,7 @@ export default function Dashboard() {
       items: [{ id: simpleUuid(), description: "Service Description", quantity: 1, price: 100 }],
       notes: "Thank you for your business. Please make payment within 30 days.",
       gstRate: settings.gstRate,
-      theme: "modern",
+      template: "modern",
       currency: settings.currency,
     };
     setActiveInvoice(newInvoice);
@@ -529,8 +592,8 @@ export default function Dashboard() {
     toast({ title: "Invoice Deleted", description: "The invoice has been removed from history.", variant: "destructive" });
   };
 
-  const updateInvoiceTheme = (theme: ThemeName) => {
-    if (activeInvoice) setActiveInvoice(prev => prev ? {...prev, theme} : null);
+  const updateInvoiceTemplate = (template: TemplateName) => {
+    if (activeInvoice) setActiveInvoice(prev => prev ? {...prev, template} : null);
   };
   
   const saveInvoice = useCallback(() => {
@@ -565,21 +628,22 @@ export default function Dashboard() {
             <SidebarGroup>
               <Button className="w-full justify-start" onClick={createNewInvoice}><Plus className="mr-2"/> New Invoice</Button>
               <Button className="w-full justify-start mt-2" variant="ghost" onClick={() => setActiveView('settings')}><Settings className="mr-2"/> Settings</Button>
+               <DarkModeToggle />
             </SidebarGroup>
             <div className="mt-auto flex flex-col">
               <SidebarGroup>
-                <SidebarGroupLabel>Themes</SidebarGroupLabel>
-                <ThemeSelector currentTheme={activeInvoice?.theme || 'modern'} onThemeChange={updateInvoiceTheme} />
+                <SidebarGroupLabel>Templates</SidebarGroupLabel>
+                <TemplateSelector currentTemplate={activeInvoice?.template || 'modern'} onTemplateChange={updateInvoiceTemplate} />
               </SidebarGroup>
               <SidebarGroup className="flex-grow flex flex-col">
                 <SidebarGroupLabel>History</SidebarGroupLabel>
                 <InvoiceHistory invoices={history} onLoad={loadInvoice} onDelete={deleteInvoice} activeId={activeInvoice?.id || ''} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-              </SidebarGroup>
+              </SiderbarGroup>
             </div>
           </SidebarContent>
         </Sidebar>
         <SidebarInset>
-          <div className="p-4 sm:p-6 lg:p-8 flex flex-col h-full">
+          <div className={cn("p-4 sm:p-6 lg:p-8 flex flex-col h-full", activeView === 'invoice' && 'invoice-page-wrapper')}>
             <header className="mb-8 flex items-center justify-between no-print md:hidden"><SidebarTrigger /></header>
             {activeView === 'invoice' && 
               <InvoicePage 
@@ -598,5 +662,3 @@ export default function Dashboard() {
     </SidebarProvider>
   );
 }
-
-    

@@ -1,8 +1,8 @@
 
-type ThemeName = 'classic' | 'modern' | 'minimal' | 'bold' | 'elegant';
+type TemplateName = 'classic' | 'modern' | 'minimal' | 'bold' | 'elegant';
 
-type ThemeStyles = {
-  [key in ThemeName]: {
+type TemplateStyles = {
+  [key in TemplateName]: {
     name: string;
     preview: {
       background: string;
@@ -21,7 +21,7 @@ type ThemeStyles = {
   };
 };
 
-export const themes: ThemeStyles = {
+export const templates: TemplateStyles = {
   classic: {
     name: "Classic",
     preview: { background: "bg-white", primary: "bg-slate-700", secondary: "bg-slate-200" },

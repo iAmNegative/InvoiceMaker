@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { cn, formatCurrency } from "@/lib/utils";
-import { templates } from "@/lib/templates";
+import { templates } from "@/lib/themes";
 import { format } from "date-fns";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Plus, Settings, FileText, Trash2, Search, Download, Save, PlusCircle, Calendar as CalendarIcon, CheckCircle, Moon, Sun } from "lucide-react";
@@ -447,8 +447,8 @@ const InvoicePage = ({ activeInvoice, setActiveInvoice, saveInvoice, handleSaveA
             <p className="text-muted-foreground text-sm sm:text-base">Fill in the details to generate your invoice.</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button onClick={saveInvoice} variant="outline" size="sm" className="sm:size-auto"><Save className="sm:mr-2" /><span className="hidden sm:inline">Save</span></Button>
-            <Button onClick={handleSaveAndPrint} size="sm" className="sm:size-auto"><Download className="sm:mr-2" /><span className="hidden sm:inline">Save & Download</span></Button>
+            <Button onClick={saveInvoice} variant="outline"><Save className="mr-2" />Save</Button>
+            <Button onClick={handleSaveAndPrint}><Download className="mr-2" />Save & Download</Button>
           </div>
         </header>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 flex-grow min-h-0">
@@ -638,7 +638,7 @@ export default function Dashboard() {
               <SidebarGroup className="flex-grow flex flex-col">
                 <SidebarGroupLabel>History</SidebarGroupLabel>
                 <InvoiceHistory invoices={history} onLoad={loadInvoice} onDelete={deleteInvoice} activeId={activeInvoice?.id || ''} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-              </SiderbarGroup>
+              </SidebarGroup>
             </div>
           </SidebarContent>
         </Sidebar>

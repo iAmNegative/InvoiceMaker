@@ -581,22 +581,12 @@ export default function Dashboard() {
     toast({ title: "Invoice Saved", description: `Invoice ${activeInvoice.invoiceNumber} has been saved successfully.` });
   }, [activeInvoice, history, toast]);
 
-  const handlePrint = () => {
-    const printContainer = document.createElement('div');
-    printContainer.classList.add('print-only');
-    const previewNode = previewRef.current;
-    if (previewNode) {
-        const clonedNode = previewNode.cloneNode(true);
-        printContainer.appendChild(clonedNode);
-        document.body.appendChild(printContainer);
-        window.print();
-        document.body.removeChild(printContainer);
-    }
-  };
 
   const handleSaveAndPrint = () => {
     saveInvoice();
-    setTimeout(handlePrint, 100);
+    setTimeout(() => {
+      window.print();
+    }, 100);
   };
 
   return (

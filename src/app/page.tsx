@@ -223,64 +223,66 @@ const InvoicePreview = React.forwardRef<HTMLDivElement, { invoice: Invoice }>(({
   const renderCurrency = (amount: number) => formatCurrency(amount, invoice.currency);
 
   return (
-    <div ref={ref} id="invoice-preview-container" className={cn("p-10 rounded-lg h-full w-full", template.styles.container, template.font)}>
-        <style jsx global>{`
-            @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&family=Lato:wght@400;700&family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@400;700&display=swap');
-        `}</style>
-      <div className={template.styles.header}>
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-          <div>
-            <h1 className="text-3xl font-bold uppercase">Invoice</h1>
-            <p className="font-bold text-lg mt-2">{invoice.fromName}</p>
+    <div id="invoice-preview-wrapper" className="shadow-lg rounded-lg border bg-card text-card-foreground">
+        <div ref={ref} id="invoice-preview-container" className={cn("p-10 rounded-lg h-full w-full", template.styles.container, template.font)}>
+            <style jsx global>{`
+                @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&family=Lato:wght@400;700&family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@400;700&display=swap');
+            `}</style>
+          <div className={template.styles.header}>
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+              <div>
+                <h1 className="text-3xl font-bold uppercase">Invoice</h1>
+                <p className="font-bold text-lg mt-2">{invoice.fromName}</p>
+              </div>
+              <div className="text-left sm:text-right text-sm">
+                <p className="font-semibold">{invoice.invoiceNumber}</p>
+                <p>Date: {format(invoice.date, "MMM dd, yyyy")}</p>
+                <p>Due: {format(invoice.dueDate, "MMM dd, yyyy")}</p>
+              </div>
+            </div>
           </div>
-          <div className="text-left sm:text-right text-sm">
-            <p className="font-semibold">{invoice.invoiceNumber}</p>
-            <p>Date: {format(invoice.date, "MMM dd, yyyy")}</p>
-            <p>Due: {format(invoice.dueDate, "MMM dd, yyyy")}</p>
+          <div className={cn("grid grid-cols-2 gap-8 my-8 text-sm", template.styles.fromTo)}>
+            <div>
+              <h3 className="font-semibold mb-2 uppercase tracking-wider text-xs">From:</h3>
+              <p className="font-semibold">{invoice.fromName}</p>
+              <p className="whitespace-pre-line">{invoice.fromAddress}</p>
+            </div>
+            <div className="text-right">
+              <h3 className="font-semibold mb-2 uppercase tracking-wider text-xs">To:</h3>
+              <p className="font-semibold">{invoice.clientName}</p>
+              <p className="whitespace-pre-line">{invoice.clientAddress}</p>
+            </div>
           </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead><tr className={template.styles.tableHeader}><th className="p-3">Description</th><th className="p-3 text-center">Qty</th><th className="p-3 text-right">Unit Price</th><th className="p-3 text-right">Total</th></tr></thead>
+              <tbody>
+                {invoice.items.map((item) => (
+                  <tr key={item.id} className={template.styles.tableRow}>
+                    <td className="p-3">{item.description}</td>
+                    <td className="p-3 text-center">{item.quantity}</td>
+                    <td className="p-3 text-right">{renderCurrency(item.price)}</td>
+                    <td className="p-3 text-right">{renderCurrency(item.quantity * item.price)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className={cn("flex justify-end mt-8", template.styles.totals)}>
+            <div className="w-full max-w-xs space-y-2 text-sm">
+              <div className="flex justify-between"><span>Subtotal</span><span>{renderCurrency(subtotal)}</span></div>
+              <div className="flex justify-between"><span>GST ({invoice.gstRate}%)</span><span>{renderCurrency(gstAmount)}</span></div>
+              <div className={cn("flex justify-between font-bold text-lg border-t pt-2", template.styles.totalRow)}><span>Total</span><span>{renderCurrency(total)}</span></div>
+            </div>
+          </div>
+          {invoice.notes && (
+            <div className="mt-8 text-sm">
+              <h3 className="font-semibold mb-2">Notes</h3>
+              <p className="whitespace-pre-line">{invoice.notes}</p>
+            </div>
+          )}
+          <footer className={cn("text-xs text-center mt-8 pt-4", template.styles.footer)}><p>Thank you for choosing {invoice.fromName}.</p></footer>
         </div>
-      </div>
-      <div className={cn("grid grid-cols-2 gap-8 my-8 text-sm", template.styles.fromTo)}>
-        <div>
-          <h3 className="font-semibold mb-2 uppercase tracking-wider text-xs">From:</h3>
-          <p className="font-semibold">{invoice.fromName}</p>
-          <p className="whitespace-pre-line">{invoice.fromAddress}</p>
-        </div>
-        <div className="text-right">
-          <h3 className="font-semibold mb-2 uppercase tracking-wider text-xs">To:</h3>
-          <p className="font-semibold">{invoice.clientName}</p>
-          <p className="whitespace-pre-line">{invoice.clientAddress}</p>
-        </div>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead><tr className={template.styles.tableHeader}><th className="p-3">Description</th><th className="p-3 text-center">Qty</th><th className="p-3 text-right">Unit Price</th><th className="p-3 text-right">Total</th></tr></thead>
-          <tbody>
-            {invoice.items.map((item) => (
-              <tr key={item.id} className={template.styles.tableRow}>
-                <td className="p-3">{item.description}</td>
-                <td className="p-3 text-center">{item.quantity}</td>
-                <td className="p-3 text-right">{renderCurrency(item.price)}</td>
-                <td className="p-3 text-right">{renderCurrency(item.quantity * item.price)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className={cn("flex justify-end mt-8", template.styles.totals)}>
-        <div className="w-full max-w-xs space-y-2 text-sm">
-          <div className="flex justify-between"><span>Subtotal</span><span>{renderCurrency(subtotal)}</span></div>
-          <div className="flex justify-between"><span>GST ({invoice.gstRate}%)</span><span>{renderCurrency(gstAmount)}</span></div>
-          <div className={cn("flex justify-between font-bold text-lg border-t pt-2", template.styles.totalRow)}><span>Total</span><span>{renderCurrency(total)}</span></div>
-        </div>
-      </div>
-      {invoice.notes && (
-        <div className="mt-8 text-sm">
-          <h3 className="font-semibold mb-2">Notes</h3>
-          <p className="whitespace-pre-line">{invoice.notes}</p>
-        </div>
-      )}
-      <footer className={cn("text-xs text-center mt-8 pt-4", template.styles.footer)}><p>Thank you for choosing {invoice.fromName}.</p></footer>
     </div>
   );
 });
@@ -464,7 +466,7 @@ const InvoicePage = ({ activeInvoice, setActiveInvoice, saveInvoice, handleSaveA
             </ScrollArea>
             <div className="lg:col-span-3">
                 <ScrollArea className="h-full">
-                    <div id="invoice-preview-wrapper" className="shadow-lg rounded-lg border bg-card text-card-foreground light">
+                    <div className="light">
                         <InvoicePreview invoice={activeInvoice} ref={previewRef} />
                     </div>
                 </ScrollArea>
@@ -487,7 +489,7 @@ const InvoicePage = ({ activeInvoice, setActiveInvoice, saveInvoice, handleSaveA
                 </TabsContent>
                 <TabsContent value="preview" className="flex-grow min-h-0">
                      <ScrollArea className="h-full">
-                        <div id="invoice-preview-wrapper-mobile" className="shadow-lg rounded-lg border bg-card text-card-foreground light mt-4">
+                        <div id="invoice-preview-wrapper-mobile" className="light mt-4">
                             <InvoicePreview invoice={activeInvoice} ref={previewRef} />
                         </div>
                     </ScrollArea>
@@ -579,61 +581,73 @@ export default function Dashboard() {
     toast({ title: "Invoice Saved", description: `Invoice ${activeInvoice.invoiceNumber} has been saved successfully.` });
   }, [activeInvoice, history, toast]);
 
-  const handlePrint = () => window.print();
+  const handlePrint = () => {
+    const printContainer = document.createElement('div');
+    printContainer.classList.add('print-only');
+    const previewNode = previewRef.current;
+    if (previewNode) {
+        const clonedNode = previewNode.cloneNode(true);
+        printContainer.appendChild(clonedNode);
+        document.body.appendChild(printContainer);
+        window.print();
+        document.body.removeChild(printContainer);
+    }
+  };
 
   const handleSaveAndPrint = () => {
     saveInvoice();
-    // Delay print to allow state to update and re-render
     setTimeout(handlePrint, 100);
   };
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen invoice-page-wrapper">
-        <Sidebar className="no-print">
-          <SidebarHeader>
-            <div className="flex items-center gap-2 p-2">
-              <FileText className="text-primary"/>
-              <h1 className="text-xl font-semibold">OutVoice</h1>
-            </div>
-          </SidebarHeader>
-          <SidebarContent className="flex flex-col">
-            <SidebarGroup>
-              <Button className="w-full justify-start" onClick={createNewInvoice}><Plus className="mr-2"/> New Invoice</Button>
-              <Button className="w-full justify-start mt-2" variant="ghost" onClick={() => setActiveView('settings')}><Settings className="mr-2"/> Settings</Button>
-            </SidebarGroup>
-            <div className="mt-auto flex flex-col min-h-0">
+    <div className="light">
+      <SidebarProvider>
+        <div className="flex min-h-screen invoice-page-wrapper">
+          <Sidebar className="no-print">
+            <SidebarHeader>
+              <div className="flex items-center gap-2 p-2">
+                <FileText className="text-primary"/>
+                <h1 className="text-xl font-semibold">OutVoice</h1>
+              </div>
+            </SidebarHeader>
+            <SidebarContent className="flex flex-col">
               <SidebarGroup>
-                <SidebarGroupLabel>Templates</SidebarGroupLabel>
-                <TemplateSelector currentTemplate={activeInvoice?.template || 'modern'} onTemplateChange={updateInvoiceTemplate} />
+                <Button className="w-full justify-start" onClick={createNewInvoice}><Plus className="mr-2"/> New Invoice</Button>
+                <Button className="w-full justify-start mt-2" variant="ghost" onClick={() => setActiveView('settings')}><Settings className="mr-2"/> Settings</Button>
               </SidebarGroup>
-              <SidebarGroup className="flex-grow flex flex-col">
-                <SidebarGroupLabel>History</SidebarGroupLabel>
-                <InvoiceHistory invoices={history} onLoad={loadInvoice} onDelete={deleteInvoice} activeId={activeInvoice?.id || ''} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-              </SidebarGroup>
+              <div className="mt-auto flex flex-col min-h-0">
+                <SidebarGroup>
+                  <SidebarGroupLabel>Templates</SidebarGroupLabel>
+                  <TemplateSelector currentTemplate={activeInvoice?.template || 'modern'} onTemplateChange={updateInvoiceTemplate} />
+                </SidebarGroup>
+                <SidebarGroup className="flex-grow flex flex-col">
+                  <SidebarGroupLabel>History</SidebarGroupLabel>
+                  <InvoiceHistory invoices={history} onLoad={loadInvoice} onDelete={deleteInvoice} activeId={activeInvoice?.id || ''} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+                </SidebarGroup>
+              </div>
+            </SidebarContent>
+          </Sidebar>
+          <SidebarInset>
+            <div className={cn("p-4 sm:p-6 lg:p-8 flex flex-col h-screen", activeView === 'invoice' ? 'bg-muted/30' : '')}>
+               <header className="mb-4 flex items-center justify-between no-print md:hidden">
+                <SidebarTrigger />
+                <div></div>
+              </header>
+              {activeView === 'invoice' && 
+                <InvoicePage 
+                  activeInvoice={activeInvoice} 
+                  setActiveInvoice={setActiveInvoice} 
+                  saveInvoice={saveInvoice} 
+                  handleSaveAndPrint={handleSaveAndPrint}
+                  createNewInvoice={createNewInvoice}
+                  previewRef={previewRef}
+                />
+              }
+              {activeView === 'settings' && <SettingsPage settings={settings} setSettings={setSettings} />}
             </div>
-          </SidebarContent>
-        </Sidebar>
-        <SidebarInset>
-          <div className={cn("p-4 sm:p-6 lg:p-8 flex flex-col h-screen", activeView === 'invoice')}>
-             <header className="mb-4 flex items-center justify-between no-print md:hidden">
-              <SidebarTrigger />
-              <div></div>
-            </header>
-            {activeView === 'invoice' && 
-              <InvoicePage 
-                activeInvoice={activeInvoice} 
-                setActiveInvoice={setActiveInvoice} 
-                saveInvoice={saveInvoice} 
-                handleSaveAndPrint={handleSaveAndPrint}
-                createNewInvoice={createNewInvoice}
-                previewRef={previewRef}
-              />
-            }
-            {activeView === 'settings' && <SettingsPage settings={settings} setSettings={setSettings} />}
-          </div>
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
+          </SidebarInset>
+        </div>
+      </SidebarProvider>
+    </div>
   );
 }

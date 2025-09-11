@@ -103,21 +103,29 @@
 }
 
 @media print {
-  body {
-    background: white !important;
+  body * {
+    visibility: hidden;
   }
-  .no-print,
-  body > :not(#invoice-print-container) {
-    display: none !important;
+
+  #invoice-preview-wrapper, #invoice-preview-wrapper * {
+    visibility: visible;
   }
-  #invoice-print-container {
-    display: block !important;
+  
+  #invoice-preview-wrapper-mobile, #invoice-preview-wrapper-mobile * {
+    visibility: visible;
+  }
+
+  #invoice-preview-wrapper, #invoice-preview-wrapper-mobile {
     position: absolute;
-    top: 0;
     left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
   }
+  
   #invoice-preview-container {
     box-shadow: none !important;
     border: none !important;
@@ -126,4 +134,3 @@
     border-radius: 0 !important;
   }
 }
-

@@ -582,38 +582,10 @@ export default function Dashboard() {
     toast({ title: "Invoice Saved", description: `Invoice ${activeInvoice.invoiceNumber} has been saved successfully.` });
   }, [activeInvoice, history, toast]);
 
-  const handlePrint = () => {
-    if (!activeInvoice) return;
-
-    // Create a temporary container for printing
-    let printContainer = document.getElementById('invoice-print-container');
-    if (!printContainer) {
-      printContainer = document.createElement('div');
-      printContainer.id = 'invoice-print-container';
-      document.body.appendChild(printContainer);
-    }
-    
-    // Render the InvoicePreview into the container
-    ReactDOM.render(
-      <div className="light">
-        <InvoicePreview invoice={activeInvoice} />
-      </div>,
-      printContainer,
-      () => {
-        // Once rendered, trigger the print dialog
-        window.print();
-        // Clean up after printing
-        document.body.removeChild(printContainer!);
-      }
-    );
-  };
-
-
   const handleSaveAndPrint = () => {
     saveInvoice();
-    // A small delay to allow the toast to appear and be ignored by print styles
     setTimeout(() => {
-        handlePrint();
+      window.print();
     }, 100);
   };
 

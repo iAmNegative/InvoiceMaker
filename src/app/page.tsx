@@ -37,12 +37,13 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { cn, formatCurrency } from "@/lib/utils";
 import { templates } from "@/lib/themes";
 import { format } from "date-fns";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Plus, Settings, FileText, Trash2, Search, Download, Save, PlusCircle, Calendar as CalendarIcon, CheckCircle } from "lucide-react";
+import { Plus, Settings, FileText, Trash2, Search, Download, Save, PlusCircle, Calendar as CalendarIcon, CheckCircle, Edit, Eye } from "lucide-react";
 
 
 // --- TYPE DEFINITIONS ---
@@ -212,6 +213,7 @@ const InvoiceForm = ({ invoice, setInvoice }: { invoice: Invoice, setInvoice: Re
     </div>
   );
 }
+InvoiceForm.displayName = 'InvoiceForm';
 
 const InvoicePreview = React.forwardRef<HTMLDivElement, { invoice: Invoice }>(({ invoice }, ref) => {
   const subtotal = invoice.items.reduce((acc, item) => acc + item.quantity * item.price, 0);
@@ -311,6 +313,7 @@ const TemplateSelector = ({ currentTemplate, onTemplateChange }: { currentTempla
       ))}
     </div>
 );
+TemplateSelector.displayName = 'TemplateSelector';
 
 const InvoiceHistory = ({ invoices, onLoad, onDelete, activeId, searchTerm, setSearchTerm }: { invoices: Invoice[], onLoad: (id: string) => void, onDelete: (id: string) => void, activeId: string, searchTerm: string, setSearchTerm: (term: string) => void }) => {
     const filteredInvoices = invoices.filter(invoice => 
@@ -366,6 +369,7 @@ const InvoiceHistory = ({ invoices, onLoad, onDelete, activeId, searchTerm, setS
       </div>
     );
 }
+InvoiceHistory.displayName = 'InvoiceHistory';
 
 const SettingsPage = ({ settings, setSettings }: { settings: AppSettings, setSettings: React.Dispatch<React.SetStateAction<AppSettings>> }) => {
     const { toast } = useToast();
@@ -420,6 +424,7 @@ const SettingsPage = ({ settings, setSettings }: { settings: AppSettings, setSet
       </div>
     );
 }
+SettingsPage.displayName = 'SettingsPage';
   
 const InvoicePage = ({ activeInvoice, setActiveInvoice, saveInvoice, handleSaveAndPrint, createNewInvoice, previewRef }: { 
     activeInvoice: Invoice | null;
@@ -451,21 +456,48 @@ const InvoicePage = ({ activeInvoice, setActiveInvoice, saveInvoice, handleSaveA
             <Button onClick={handleSaveAndPrint} className="shadow-sm font-semibold"><Download className="mr-2 h-4 w-4" />Save & Download</Button>
           </div>
         </header>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 flex-grow min-h-0">
-          <ScrollArea className="lg:col-span-2 no-print pr-2 -mr-2">
-            <InvoiceForm invoice={activeInvoice} setInvoice={setActiveInvoice as React.Dispatch<React.SetStateAction<Invoice>>} />
-          </ScrollArea>
-          <div className="lg:col-span-3">
-             <ScrollArea className="h-full">
-                <div id="invoice-preview-wrapper" className="shadow-lg rounded-lg border bg-card text-card-foreground light">
-                    <InvoicePreview invoice={activeInvoice} ref={previewRef} />
-                </div>
+
+        {/* Desktop View: Side-by-side */}
+        <div className="hidden lg:grid grid-cols-1 lg:grid-cols-5 gap-8 flex-grow min-h-0">
+            <ScrollArea className="lg:col-span-2 no-print pr-2 -mr-2">
+                <InvoiceForm invoice={activeInvoice} setInvoice={setActiveInvoice as React.Dispatch<React.SetStateAction<Invoice>>} />
             </ScrollArea>
-          </div>
+            <div className="lg:col-span-3">
+                <ScrollArea className="h-full">
+                    <div id="invoice-preview-wrapper" className="shadow-lg rounded-lg border bg-card text-card-foreground light">
+                        <InvoicePreview invoice={activeInvoice} ref={previewRef} />
+                    </div>
+                </ScrollArea>
+            </div>
+        </div>
+
+        {/* Mobile View: Tabs */}
+        <div className="lg:hidden flex flex-col flex-grow min-h-0">
+            <Tabs defaultValue="edit" className="flex flex-col flex-grow min-h-0">
+                <TabsList className="grid w-full grid-cols-2 no-print">
+                    <TabsTrigger value="edit"><Edit className="mr-2"/> Edit</TabsTrigger>
+                    <TabsTrigger value="preview"><Eye className="mr-2"/> Preview</TabsTrigger>
+                </TabsList>
+                <TabsContent value="edit" className="flex-grow min-h-0">
+                    <ScrollArea className="h-full">
+                        <div className="pt-4">
+                            <InvoiceForm invoice={activeInvoice} setInvoice={setActiveInvoice as React.Dispatch<React.SetStateAction<Invoice>>} />
+                        </div>
+                    </ScrollArea>
+                </TabsContent>
+                <TabsContent value="preview" className="flex-grow min-h-0">
+                     <ScrollArea className="h-full">
+                        <div id="invoice-preview-wrapper-mobile" className="shadow-lg rounded-lg border bg-card text-card-foreground light mt-4">
+                            <InvoicePreview invoice={activeInvoice} ref={previewRef} />
+                        </div>
+                    </ScrollArea>
+                </TabsContent>
+            </Tabs>
         </div>
       </div>
     );
 }
+InvoicePage.displayName = 'InvoicePage';
 
 // --- MAIN DASHBOARD COMPONENT ---
 export default function Dashboard() {
